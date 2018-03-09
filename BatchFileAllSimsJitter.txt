@@ -1,0 +1,152 @@
+## Source File to run simulations with ties and equal sample sizes
+## Created December 15, 2017
+
+require(VGAM)
+require(plyr)
+require(dplyr)
+require(coin)
+
+source("SmallSampleTiesJitter.txt")
+
+## Simulations
+cat("Using jittering to break ties","\n")
+cat("Type I Error Simulations","\n")
+cat("Equal Sample Sizes, 10%","\n")
+jitt55 <- allSimsJitt(5, 5, 1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt88 <- allSimsJitt(8, 8, 1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1010 <- allSimsJitt(10, 10, 1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1515 <- allSimsJitt(15, 15, 2, alpha = 0.05, nsims = 1000, nreps=100)
+jitt2020 <- allSimsJitt(20, 20, 2, alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.jitt.10 <- list(jitt55,jitt88,jitt1010,jitt1515,jitt2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.jitt.10) <- c("Distribution","WMW-N5","T-N5","WMW-N8","T-N8","WMW-N10","T-N10","WMW-N15","T-N15","WMW-N20","T-N20")
+
+write.csv(Results.jitt.10,file="TiesJitt10Percent.csv")
+
+cat("Equal Sample Sizes, 15%","\n")
+jitt66 <- allSimsJitt(6, 6, 1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt88 <- allSimsJitt(8, 8, 1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1010 <- allSimsJitt(10, 10, 2, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1515 <- allSimsJitt(15, 15, 3, alpha = 0.05, nsims = 1000, nreps=100)
+jitt2020 <- allSimsJitt(20, 20, 3, alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.jitt.15 <- list(jitt55,jitt88,jitt1010,jitt1515,jitt2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.jitt.15) <- c("Distribution","WMW-N5","T-N5","WMW-N8","T-N8","WMW-N10","T-N10","WMW-N15","T-N15","WMW-N20","T-N20")
+
+write.csv(Results.jitt.15,file="TiesJitt15Percent.csv")
+
+
+cat("Equal Sample Sizes, 25%","\n")
+jitt55 <- allSimsJitt(5, 5, 2, alpha = 0.05, nsims = 1000, nreps=100)
+jitt66 <- allSimsJitt(6, 6, 2, alpha = 0.05, nsims = 1000, nreps=100)
+jitt77 <- allSimsJitt(7, 7, 2, alpha = 0.05, nsims = 1000, nreps=100)
+jitt88 <- allSimsJitt(8, 8, 2, alpha = 0.05, nsims = 1000, nreps=100)
+jitt99 <- allSimsJitt(9, 9, 3, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1010 <- allSimsJitt(10, 10, 3, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1111 <- allSimsJitt(11, 11, 3, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1212 <- allSimsJitt(12, 12, 3, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1313 <- allSimsJitt(13, 13, 4, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1414 <- allSimsJitt(14, 14, 4, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1515 <- allSimsJitt(15, 15, 4, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1616 <- allSimsJitt(16, 16, 4, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1717 <- allSimsJitt(17, 17, 5, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1818 <- allSimsJitt(18, 18, 5, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1919 <- allSimsJitt(19, 19, 5, alpha = 0.05, nsims = 1000, nreps=100)
+jitt2020 <- allSimsJitt(20, 20, 5, alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.jitt.25 <- list(jitt55,jitt66,jitt77,jitt88,jitt99,jitt1010,jitt1111,jitt1212,jitt1313,jitt1414,jitt1515,jitt1616,jitt1717,jitt1818,jitt1919,jitt2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.jitt.25) <- c("Distribution","WMW-N5","T-N5","WMW-N6","T-N6","WMW-N7","T-N7","WMW-N8","T-N8","WMW-N9","T-N9","WMW-N10","T-N10","WMW-N11","T-N11","WMW-N12","T-N12","WMW-N13","T-N13","WMW-N14","T-N14","WMW-N15","T-N15","WMW-N16","T-N116","WMW-N17","T-N17","WMW-N18","T-N18","WMW-N19","T-N19","WMW-N20","T-N20")
+
+write.csv(Results.jitt.25,file="TiesJitt25Percent.csv")
+
+cat("Equal Sample Sizes, 50%","\n")
+jitt55 <- allSimsJitt(5, 5, 3, ,alpha = 0.05, nsims = 1000, nreps=100)
+jitt66 <- allSimsJitt(6, 6, 3, alpha = 0.05, nsims = 1000, nreps=100)
+jitt77 <- allSimsJitt(7, 7, 4, alpha = 0.05, nsims = 1000, nreps=100)
+jitt88 <- allSimsJitt(8, 8, 4, alpha = 0.05, nsims = 1000, nreps=100)
+jitt99 <- allSimsJitt(9, 9, 5, alpha = 0.05, nsims = 1000, nreps=100)
+cat("First five done","\n")
+jitt1010 <- allSimsJitt(10, 10, 5, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1111 <- allSimsJitt(11, 11, 6, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1212 <- allSimsJitt(12, 12, 6, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1313 <- allSimsJitt(13, 13, 7, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1414 <- allSimsJitt(14, 14, 7, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1515 <- allSimsJitt(15, 15, 8, alpha = 0.05, nsims = 1000, nreps=100)
+cat("Next five done","\n")
+jitt1616 <- allSimsJitt(16, 16, 8, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1717 <- allSimsJitt(17, 17, 9, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1818 <- allSimsJitt(18, 18, 9, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1919 <- allSimsJitt(19, 19, 10, alpha = 0.05, nsims = 1000, nreps=100)
+jitt2020 <- allSimsJitt(20, 20, 10, alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.jitt.50 <- list(jitt55,jitt66,jitt77,jitt88,jitt99,jitt1010,jitt1111,jitt1212,jitt1313,jitt1414,jitt1515,jitt1616,jitt1717,jitt1818.jitt1919,jitt2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.jitt.50) <- c("Distribution","WMW-N5","T-N5","WMW-N6","T-N6","WMW-N7","T-N7","WMW-N8","T-N8","WMW-N9","T-N9","WMW-N10","T-N10","WMW-N11","T-N11","WMW-N12","T-N12","WMW-N13","T-N13","WMW-N14","T-N14","WMW-N15","T-N15","WMW-N16","T-N16","WMW-N17","T-N17","WMW-N18","T-N18","WMW-N19","T-N19","WMW-N20","T-N20")
+
+write.csv(Results.jitt.50,file="TiesJitt50Percent.csv")
+
+cat("Power Simulations","\n")
+cat("Equal Sample Sizes, 10%","\n")
+jitt55 <- allSimsJitt(5, 5, 1, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt88 <- allSimsJitt(8, 8, 1, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1010 <- allSimsJitt(10, 10, 1, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1515 <- allSimsJitt(15, 15, 2, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt2020 <- allSimsJitt(20, 20, 2, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.jitt.10 <- list(jitt55,jitt88,jitt1010,jitt1515,jitt2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.jitt.10) <- c("Distribution","WMW-N5","T-N5","WMW-N8","T-N8","WMW-N10","T-N10","WMW-N15","T-N15","WMW-N20","T-N20")
+
+write.csv(Results.jitt.10,file="TiesJitt10PercentPowerd1.csv")
+
+cat("Power for Equal Sample Sizes, 15%","\n")
+jitt66 <- allSimsJitt(6, 6, 1, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt88 <- allSimsJitt(8, 8, 1, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1010 <- allSimsJitt(10, 10, 2, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1515 <- allSimsJitt(15, 15, 3, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt2020 <- allSimsJitt(20, 20, 3, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.jitt.15 <- list(jitt55,jitt88,jitt1010,jitt1515,jitt2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.jitt.15) <- c("Distribution","WMW-N5","T-N5","WMW-N8","T-N8","WMW-N10","T-N10","WMW-N15","T-N15","WMW-N20","T-N20")
+
+write.csv(Results.jitt.15,file="TiesJitt15PercentPowerd1.csv")
+
+cat("Power Simulations","\n")
+cat("Equal Sample Sizes, 25%","\n")
+jitt55 <- allSimsJitt(5, 5, 2, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt88 <- allSimsJitt(8, 8, 2, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1010 <- allSimsJitt(10, 3, 1, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1515 <- allSimsJitt(15, 4, 2, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt2020 <- allSimsJitt(20, 5, 2, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.jitt.25 <- list(jitt55,jitt88,jitt1010,jitt1515,jitt2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.jitt.25) <- c("Distribution","WMW-N5","T-N5","WMW-N8","T-N8","WMW-N10","T-N10","WMW-N15","T-N15","WMW-N20","T-N20")
+
+write.csv(Results.jitt.25,file="TiesJitt25PercentPowerd1.csv")
+
+cat("Power for Equal Sample Sizes, 50%","\n")
+jitt66 <- allSimsJitt(6, 6, 3, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt88 <- allSimsJitt(8, 8, 4, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1010 <- allSimsJitt(10, 10, 5, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt1515 <- allSimsJitt(15, 15, 7, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+jitt2020 <- allSimsJitt(20, 20, 10, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.jitt.50 <- list(jitt55,jitt88,jitt1010,jitt1515,jitt2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.jitt.50) <- c("Distribution","WMW-N5","T-N5","WMW-N8","T-N8","WMW-N10","T-N10","WMW-N15","T-N15","WMW-N20","T-N20")
+
+write.csv(Results.jitt.50,file="TiesJitt50PercentPowerd1.csv")
+

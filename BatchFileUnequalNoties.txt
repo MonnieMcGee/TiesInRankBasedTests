@@ -1,0 +1,59 @@
+## Source File to run simulations with unequal sample sizes
+## Created December 12, 2017
+
+require(VGAM)
+require(dplyr)
+require(coin)
+
+source("SmallSampleTypeIWMW.txt")
+source("SmallSampleTypeITtest.txt")
+
+## Simulations with Ttest for Unequal Sample Sizes
+cat("Two Sample t-test Simulations Unequal Sample Sizes","\n")
+sims.t.63 <- allSimsT(6,3)
+sims.t.74 <- allSimsT(7,4)
+sims.t.64 <- allSimsT(6,4)
+sims.t.75 <- allSimsT(7,5)
+sims.t.65 <- allSimsT(6,5)
+sims.t.76 <- allSimsT(7,6)
+cat("Small Unequal Sample Sizes Complete","\n")
+sims.t.1005 <- allSimsT(10,5)
+sims.t.1008 <- allSimsT(10,8)
+sims.t.1507 <- allSimsT(15,7)
+sims.t.1510 <- allSimsT(15,10)
+sims.t.1512 <- allSimsT(15,12)
+cat("Unqual Sample Sizes 10 - 15 Complete","\n")
+sims.t.2010 <- allSimsT(20,10)
+sims.t.2015 <- allSimsT(20,15)
+cat("One more to go!", "\n")
+sims.t.2018 <- allSimsT(20,18)
+
+# Write to CSV files
+all.t.Unequal.noties <- list(sims.t.63,sims.t.64,sims.t.65,sims.t.74,sims.t.75, sims.t.76,sims.t.1005,sims.t.1008,sims.t.1507,sims.t.1510,sims.t.1512,sims.t.2010,sims.t.2015, sims.t.2018) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="labels"),.)
+
+names(all.t.Unequal.noties) <- c("Distribution","N6M3","N6M4","N6M5","N7M4","N7M5","N7M6","N10M5","N10M8","N15M7","N15M10","N15M12","N20M10","N20M15","N20M18")
+write.csv(all.t.Unequal.noties,file="AllTtestUnequalNoties.csv")
+
+cat("Wilcoxon Rank Sum Simulations Unequal Sizes","\n")
+sims.wmw.63 <- allSimsW(6,3)
+sims.wmw.74 <- allSimsW(7,4)
+sims.wmw.75 <- allSimsW(7,5)
+sims.wmw.76 <- allSimsW(7,6)
+sims.wmw.65 <- allSimsW(6,5)
+sims.wmw.64 <- allSimsW(6,4)
+cat("Equal Sample Sizes 3-9 Complete","\n")
+sims.wmw.1005 <- allSimsW(10,5)
+sims.wmw.1008 <- allSimsW(10,8)
+sims.wmw.1507 <- allSimsW(15,7)
+sims.wmw.1510 <- allSimsW(15,10)
+sims.wmw.1512 <- allSimsW(15,12)
+cat("Equal Sample Sizes 10 - 15 Complete","\n")
+sims.wmw.2010 <- allSimsW(20,10)
+sims.wmw.2015 <- allSimsW(20,15)
+cat("One more to go!", "\n")
+sims.wmw.2018 <- allSimsW(18,18)
+
+all.wmw.Unequal.noties <- list(sims.wmw.63,sims.wmw.64,sims.wmw.65,sims.wmw.74,sims.wmw.75, sims.wmw.76,sims.wmw.1005,sims.wmw.1008,sims.wmw.1507,sims.wmw.1510,sims.wmw.1512,sims.wmw.2010,sims.wmw.2015, sims.wmw.2018) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="labels"),.)
+
+names(all.wmw.Unequal.noties) <- c("Distribution","N6M3","N6M4","N6M5","N7M4","N7M5","N7M6","N10M5","N10M8","N15M7","N15M10","N15M12","N20M10","N20M15","N20M18")
+write.csv(all.wmw.Unequal.noties,file="AllWMWUnequalNoties.csv")

@@ -1,0 +1,42 @@
+## Source File to run simulations with ties and equal sample sizes
+## By omitting tied observations
+## Created February 22, 2018
+
+require(VGAM)
+require(plyr)
+require(dplyr)
+require(coin)
+
+# setwd("./Box Sync/Hamilton Scholar/Simulations")
+
+source("SmallSamplePowerOmit.txt")
+
+cat("Omitting Tied Observations","\n")
+cat("Equal Sample Sizes, 15%","\n")
+omit55 <- allSimsomit(5, 5, 1, alpha = 0.05, nsims = 1000, nreps=100)
+omit66 <- allSimsomit(6, 6, 1, alpha = 0.05, nsims = 1000, nreps=100)
+omit77 <- allSimsomit(7, 7, 1, alpha = 0.05, nsims = 1000, nreps=100)
+omit88 <- allSimsomit(8, 8, 1, alpha = 0.05, nsims = 1000, nreps=100)
+omit99 <- allSimsomit(9, 9, 1, alpha = 0.05, nsims = 1000, nreps=100)
+cat("First five done","\n")
+omit1010 <- allSimsomit(10, 10, 2, alpha = 0.05, nsims = 1000, nreps=100)
+omit1111 <- allSimsomit(11, 11, 2, alpha = 0.05, nsims = 1000, nreps=100)
+omit1212 <- allSimsomit(12, 12, 2, alpha = 0.05, nsims = 1000, nreps=100)
+omit1313 <- allSimsomit(13, 13, 2, alpha = 0.05, nsims = 1000, nreps=100)
+omit1414 <- allSimsomit(14, 14, 2, alpha = 0.05, nsims = 1000, nreps=100)
+omit1515 <- allSimsomit(15, 15, 3, alpha = 0.05, nsims = 1000, nreps=100)
+cat("Next five done","\n")
+omit1616 <- allSimsomit(16, 16, 3, alpha = 0.05, nsims = 1000, nreps=100)
+omit1717 <- allSimsomit(17, 17, 3, alpha = 0.05, nsims = 1000, nreps=100)
+omit1818 <- allSimsomit(18, 18, 3, alpha = 0.05, nsims = 1000, nreps=100)
+omit1919 <- allSimsomit(19, 19, 3, alpha = 0.05, nsims = 1000, nreps=100)
+cat("One to go!","\n")
+omit2020 <- allSimsomit(20, 20, 3, alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.omit.15 <- list(omit55,omit66,omit77,omit88,omit99,omit1010,omit1111,omit1212,omit1313,omit1414,omit1515,omit1616,omit1717,omit1818,omit1919,omit2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.omit.15) <- c("Distribution","WMW-N5","T-N5","WMW-N6","T-N6","WMW-N7","T-N7","WMW-N8","T-N8","WMW-N9","T-N9","WMW-N10","T-N10","WMW-N11","T-N11","WMW-N12","T-N12","WMW-N13","T-N13","WMW-N14","T-N14","WMW-N15","T-N15","WMW-N16","T-N116","WMW-N17","T-N17","WMW-N18","T-N18","WMW-N19","T-N19","WMW-N20","T-N20")
+
+write.csv(Results.omit.15,file="TiesOmit15Percent.csv")
+

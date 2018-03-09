@@ -1,0 +1,65 @@
+## Source File to run simulations with ties and equal sample sizes
+## Created December 15, 2017
+
+require(VGAM)
+require(plyr)
+require(dplyr)
+require(coin)
+
+source("SmallSampleTiesWMW.txt")
+
+## Simulations
+cat("Using mid-ranks to break ties","\n")
+cat("Equal Sample Sizes, 25%","\n")
+mr55 <- allSimsTies(5, 5, 2, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr66 <- allSimsTies(6, 6, 2, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr77 <- allSimsTies(7, 7, 2, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr88 <- allSimsTies(8, 8, 2, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr99 <- allSimsTies(9, 9, 3, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr1010 <- allSimsTies(9, 9, 3, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr1111 <- allSimsTies(11, 11, 3, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr1212 <- allSimsTies(12, 12, 3, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr1313 <- allSimsTies(13, 13, 4, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr1414 <- allSimsTies(14, 14, 4, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr1515 <- allSimsTies(15, 15, 4, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr1616 <- allSimsTies(16, 16, 4, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr1717 <- allSimsTies(17, 17, 5, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr1818 <- allSimsTies(18, 18, 5, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr1919 <- allSimsTies(19, 19, 5, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+mr2020 <- allSimsTies(20, 20, 5, "mid-ranks", alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.mr.25 <- list(mr55,mr66,mr77,mr88,mr99,mr1010,mr1111,mr1212,mr1313,mr1414,mr1515,mr1616,mr1717,mr1818,mr1919,mr2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.mr.25) <- c("Distribution","WMW-N5","T-N5","WMW-N6","T-N6","WMW-N7","T-N7","WMW-N8","T-N8","WMW-N9","T-N9","WMW-N10","T-N10","WMW-N11","T-N11","WMW-N12","T-N12","WMW-N13","T-N13","WMW-N14","T-N14","WMW-N15","T-N15","WMW-N16","T-N116","WMW-N17","T-N17","WMW-N18","T-N18","WMW-N19","T-N19","WMW-N20","T-N20")
+
+write.csv(Results.mr.25,file="TiesMR25Percent.csv")
+
+cat("Using average-scores to break ties","\n")
+cat("Equal Sample Sizes Average Scores, 50%","\n")
+avg55 <- allSimsTies(5, 5, 3, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg66 <- allSimsTies(6, 6, 3, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg77 <- allSimsTies(7, 7, 4, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg88 <- allSimsTies(8, 8, 4, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg99 <- allSimsTies(9, 9, 5, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+cat("First five average scores done","\n")
+avg1010 <- allSimsTies(10, 10, 5, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg1111 <- allSimsTies(11, 11, 6, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg1212 <- allSimsTies(12, 12, 6, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg1313 <- allSimsTies(13, 13, 7, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg1414 <- allSimsTies(14, 14, 7, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg1515 <- allSimsTies(15, 15, 8, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+cat("Next five average scores done","\n")
+avg1616 <- allSimsTies(16, 16, 8, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg1717 <- allSimsTies(17, 17, 9, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg1818 <- allSimsTies(18, 18, 9, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg1919 <- allSimsTies(19, 19, 10, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+avg2020 <- allSimsTies(20, 20, 10, "average-scores", alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.avg.50 <- list(avg55,avg66,avg77,avg88,avg99,avg1010,avg1111,avg1212,avg1313,avg1414,avg1515,avg1616,avg1717,avg1818.avg1919,avg2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.avg.50) <- c("Distribution","WMW-N5","T-N5","WMW-N6","T-N6","WMW-N7","T-N7","WMW-N8","T-N8","WMW-N9","T-N9","WMW-N10","T-N10","WMW-N11","T-N11","WMW-N12","T-N12","WMW-N13","T-N13","WMW-N14","T-N14","WMW-N15","T-N15","WMW-N16","T-N116","WMW-N17","T-N17","WMW-N18","T-N18","WMW-N19","T-N19","WMW-N20","T-N20")
+
+write.csv(Results.avg.50,file="TiesAvgScores50Percent.csv")
+

@@ -1,0 +1,78 @@
+## File created to finish programs for Tied Ranks Paper
+## January 19, 2018
+
+require(VGAM)
+require(plyr)
+require(dplyr)
+require(coin)
+
+source("SmallSamplePowerNoTies.txt")
+## Simulations Unequal Sample Sizes
+cat("Shift = 1","\n")
+unequal63 <- allSimsTies(6,3,1)
+unequal74 <- allSimsTies(7,4,1)
+unequal64 <- allSimsTies(6,4,1)
+unequal75 <- allSimsTies(7,5,1)
+unequal65 <- allSimsTies(6,5,1)
+unequal76 <- allSimsTies(7,6,1)
+cat("Small Unequal Sample Sizes Complete","\n")
+unequal1005 <- allSimsTies(10,5,1)
+unequal1008 <- allSimsTies(10,8,1)
+unequal1507 <- allSimsTies(15,7,1)
+unequal1510 <- allSimsTies(15,10,1)
+unequal1512 <- allSimsTies(15,12,1)
+cat("Unqual Sample Sizes 10 - 15 Complete","\n")
+unequal2010 <- allSimsTies(20,10,1)
+unequal2015 <- allSimsTies(20,15,1)
+cat("One more to go!", "\n")
+unequal2018 <- allSimsTies(20,18,1)
+
+# Write to CSV files
+all.t.Unequal.noties <- list(unequal63,unequal64,unequal65,unequal74,unequal75, unequal76,unequal1005,unequal1008,unequal1507,unequal1510,unequal1512,unequal2010,unequal2015, unequal2018) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(all.t.Unequal.noties) <- c("Distribution","WMW63","T63","WMW64","T64","WMW65","T65","WMW74","T74","WMW75","T75","WMW76","T76","WMW1005","T1005","WMW1008","T1008","WMW1507","T1507","WMW1510","T1510","WMW1512","T1512","WMW2010","T2010","WMW2015","T2015","WMW2018","T2018")
+write.csv(all.t.Unequal.noties,file="AllUnequalPowerd1.csv")
+
+## Simulations with Ttest for Unequal Sample Sizes
+cat("Shift = 1.5","\n")
+unequal63 <- allSimsTies(6,3,1.5)
+unequal74 <- allSimsTies(7,4,1.5)
+unequal64 <- allSimsTies(6,4,1.5)
+unequal75 <- allSimsTies(7,5,1.5)
+unequal65 <- allSimsTies(6,5,1.5)
+unequal76 <- allSimsTies(7,6,1.5)
+cat("Small Unequal Sample Sizes Complete","\n")
+unequal1005 <- allSimsTies(10,5,1.5)
+unequal1008 <- allSimsTies(10,8,1.5)
+unequal1507 <- allSimsTies(15,7,1.5)
+unequal1510 <- allSimsTies(15,10,1.5)
+unequal1512 <- allSimsTies(15,12,1.5)
+cat("Unqual Sample Sizes 10 - 15 Complete","\n")
+unequal2010 <- allSimsTies(20,10,1.5)
+unequal2015 <- allSimsTies(20,15,1.5)
+cat("One more to go!", "\n")
+unequal2018 <- allSimsTies(20,18,1.5)
+
+# Write to CSV files
+all.t.Unequal.noties <- list(unequal63,unequal64,unequal65,unequal74,unequal75, unequal76,unequal1005,unequal1008,unequal1507,unequal1510,unequal1512,unequal2010,unequal2015, unequal2018) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(all.t.Unequal.noties) <- c("Distribution","WMW63","T63","WMW64","T64","WMW65","T65","WMW74","T74","WMW75","T75","WMW76","T76","WMW1005","T1005","WMW1507","T1507","WMW1510","T1510","WMW1512","T1512","WMW2010","T2010","WMW2015","T2015","WMW2018","T2018")
+write.csv(all.t.Unequal.noties,file="AllUnequalPowerd15.csv")
+
+source("SmallSamplePowerOmit.txt")
+
+cat("Power for Equal Sample Sizes, 50%","\n")
+omit88 <- allSimsomit(8, 8, 4, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+omit1010 <- allSimsomit(10, 10, 5, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+omit1212 <- allSimsomit(12, 12, 6, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+omit1515 <- allSimsomit(15, 15, 7, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+omit2020 <- allSimsomit(20, 20, 10, d=1, alpha = 0.05, nsims = 1000, nreps=100)
+
+## Create CSV files
+Results.omit.50 <- list(omit88,omit1010,omit1212,omit1515,omit2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="Distribution"),.)
+
+names(Results.omit.50) <- c("Distribution","WMW-N8","T-N8","WMW-N10","T-N10","WMW-N12","T-N12","WMW-N15","T-N15","WMW-N20","T-N20")
+
+write.csv(Results.omit.50,file="TiesOmit50PercentPowerd1.csv")
+
+

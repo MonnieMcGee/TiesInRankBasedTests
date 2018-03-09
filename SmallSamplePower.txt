@@ -1,0 +1,164 @@
+## Series of functions to determine the Type I and Type II Error properties of 
+## Wilcoxon Rank Sum and Wilcoxon Signed Rank tests in the presence of ties
+## This set of functions is for continuous distributions.
+
+## Sample sizes used: 3 - 20, inclusive
+## Tests examined: Wilcoxon rank sum test
+## Distributions used: Normal, t, Gamma, Exponential, Cauchy, LaPlace
+## Percentage of ties: 10%, 25%, 50%
+## Presence of ties: within one sample, within each sample, across samples
+
+require(VGAM)
+require(plyr)
+require(dplyr)
+require(coin)
+
+simNormMat <- function(n1, n2, t, d, alpha = 0.05, nsims = 1000)
+	{	
+		totalN <- n1 + n2
+		simMat <- matrix(NA,nrow=totalN,ncol=nsims)
+		for (i in 1:nsims)
+		{
+			samp1 <- rnorm(n1, mean=d)
+			samp2 <- rnorm(n2)
+			m <- min(n1,n2)
+			idx1 <- sample(1:m,t)
+			idx2 <- sample(1:m,t)
+			samp1[idx1] <- samp2[idx2]
+		simMat[,i] <- c(samp1,samp2)
+		}
+	return(simMat)
+	}
+
+simExpMat <- function(n1, n2, t, d, alpha = 0.05, nsims = 1000)
+	{	
+		totalN <- n1 + n2
+		simMat <- matrix(NA,nrow=totalN,ncol=nsims)
+		for (i in 1:nsims)
+		{
+			samp1 <- rexp(n1, rate=1+d)
+			samp2 <- rexp(n2)
+			m <- min(n1,n2)
+			idx1 <- sample(1:m,t)
+			idx2 <- sample(1:m,t)
+			samp1[idx1] <- samp2[idx2]
+		simMat[,i] <- c(samp1,samp2)
+		}
+	return(simMat)
+	}
+
+simCauchyMat <- function(n1, n2, t, d, alpha = 0.05, nsims = 1000)
+	{	
+		totalN <- n1 + n2
+		simMat <- matrix(NA,nrow=totalN,ncol=nsims)
+		for (i in 1:nsims)
+		{
+			samp1 <- rcauchy(n1, location=d)
+			samp2 <- rcauchy(n2)
+			m <- min(n1,n2)
+			idx1 <- sample(1:m,t)
+			idx2 <- sample(1:m,t)
+			samp1[idx1] <- samp2[idx2]
+		simMat[,i] <- c(samp1,samp2)
+		}
+	return(simMat)
+	}
+
+simLPMat <- function(n1, n2, t, d, alpha = 0.05, nsims = 1000)
+	{	
+		totalN <- n1 + n2
+		simMat <- matrix(NA,nrow=totalN,ncol=nsims)
+		for (i in 1:nsims)
+		{
+			samp1 <- rlaplace(n1, location=d)
+			samp2 <- rlaplace(n2)
+			m <- min(n1,n2)
+			idx1 <- sample(1:m,t)
+			idx2 <- sample(1:m,t)
+			samp1[idx1] <- samp2[idx2]
+		simMat[,i] <- c(samp1,samp2)
+		}
+	return(simMat)
+	}
+
+
+## Underlying normal population
+wmwSimNormalties <- function(n1, n2, t, d, ties.method, alpha = 0.05, nsims = 1000)
+	{	totalN <- n1+n2
+		nobs <- totalN*nsims
+		simMat <- simNormMat(n1,n2,t,d,nsims)
+		dat <- data.frame(Group=gl(2,n1,length=totalN),simMat)
+		WMWpvals <- sapply(dat[,2:ncol(dat)],function(xx) pvalue(wilcox_test(xx~dat$Group,ties.method=ties.method)))
+		Tpvals <- sapply(dat[,2:ncol(dat)],function(xx) t.test(xx~dat$Group)$p.value)
+		WMWerror <- length(WMWpvals[WMWpvals < alpha])/nsims
+		Terror <- length(Tpvals[Tpvals < alpha])/nsims
+return(matrix(c(WMWerror,Terror),nrow=2))
+}
+
+## Underlying exponential population
+wmwSimExpties <- function(n1, n2, t, d, ties.method, alpha = 0.05, nsims = 1000)
+	{	totalN <- n1+n2
+		nobs <- totalN*nsims
+		simMat <- simExpMat(n1,n2,t,d,nsims)
+		dat <- data.frame(Group=gl(2,n1,length=totalN),simMat)
+		WMWpvals <- sapply(dat[,2:ncol(dat)],function(xx) pvalue(wilcox_test(xx~dat$Group, ties.method=ties.method)))
+		Tpvals <- sapply(dat[,2:ncol(dat)],function(xx) t.test(xx~dat$Group)$p.value)
+		WMWerror <- length(WMWpvals[WMWpvals < alpha])/nsims
+		Terror <- length(Tpvals[Tpvals < alpha])/nsims
+return(matrix(c(WMWerror,Terror),nrow=2))
+}
+
+
+## Underlying Cauchy population
+wmwSimCauchyties <- function(n1, n2, t, d, ties.method, alpha = 0.05, nsims = 1000)
+	{	totalN <- n1+n2
+		nobs <- totalN*nsims
+		simMat <- simCauchyMat(n1,n2,t,d,nsims)
+		dat <- data.frame(Group=gl(2,n1,length=totalN),simMat)
+		WMWpvals <- sapply(dat[,2:ncol(dat)],function(xx) pvalue(wilcox_test(xx~dat$Group, ties.method=ties.method)))
+		Tpvals <- sapply(dat[,2:ncol(dat)],function(xx) t.test(xx~dat$Group)$p.value)
+		WMWerror <- length(WMWpvals[WMWpvals < alpha])/nsims
+		Terror <- length(Tpvals[Tpvals < alpha])/nsims
+return(matrix(c(WMWerror,Terror),nrow=2))
+}
+
+## Underlying double exponential population=
+wmwSimLPties <- function(n1, n2, t, d, ties.method, alpha = 0.05, nsims = 1000)
+	{	totalN <- n1+n2
+		nobs <- totalN*nsims
+		simMat <- simLPMat(n1,n2,t,d,nsims)
+		dat <- data.frame(Group=gl(2,n1,length=totalN),simMat)
+		WMWpvals <- sapply(dat[,2:ncol(dat)],function(xx) pvalue(wilcox_test(xx~dat$Group, ties.method=ties.method)))
+		Tpvals <- sapply(dat[,2:ncol(dat)],function(xx) t.test(xx~dat$Group)$p.value)
+		WMWerror <- length(WMWpvals[WMWpvals < alpha])/nsims
+		Terror <- length(Tpvals[Tpvals < alpha])/nsims
+return(matrix(c(WMWerror,Terror),nrow=2))
+}
+
+allSimsTies <- function(n1, n2, t, d, ties.method, alpha = 0.05, nsims = 1000, nreps=100)
+	{
+	normMat <- matrix(NA,2,nreps)
+	expMat <- matrix(NA,2,nreps)
+	cauchyMat <- matrix(NA,2,nreps)
+	lpMat <- matrix(NA,2,nreps)
+	for (j in 1:nreps)
+	{
+		normMat[,j] <- wmwSimNormalties(n1,n2,t,d,ties.method,alpha,nsims)
+		expMat[,j] <- wmwSimExpties(n1,n2,t,d,ties.method,alpha,nsims)
+		cauchyMat[,j] <- wmwSimCauchyties(n1,n2,t,d,ties.method,alpha,nsims)
+		lpMat[,j] <- wmwSimLPties(n1,n2,t,d,ties.method,alpha,nsims)
+	}
+	normMean <- apply(normMat,1,mean)
+	expMean <- apply(expMat,1,mean)
+	cauchyMean <- apply(cauchyMat,1,mean)
+	lpMean <- apply(lpMat,1,mean)
+	comboMean <- rbind(normMean,expMean,cauchyMean,lpMean)
+	labels=c("Normal","Exponential","Cauchy","LaPlace")
+	df <- data.frame(labels,comboMean)
+	names(df) <- c("Distribution","WMW","Ttest")
+	return(df)	
+	
+}
+
+
+

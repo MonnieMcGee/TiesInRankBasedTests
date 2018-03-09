@@ -1,0 +1,91 @@
+## Source File to run simulations with unequal sample sizes
+## Created December 12, 2017
+## Redone January 18, 2018 because I made a mistake on the first program!
+
+require(VGAM)
+require(dplyr)
+require(coin)
+
+source("SmallSamplePowerNoTies.txt")
+
+## Simulations with Ttest for Unequal Sample Sizes
+cat("Power for Unequal Sample Sizes","\n")
+cat("Shift = 0.5","\n")
+sims.t.63 <- allSimsTies(6,3,0.5)
+sims.t.74 <- allSimsTies(7,4,0.5)
+sims.t.64 <- allSimsTies(6,4,0.5)
+sims.t.75 <- allSimsTies(7,5,0.5)
+sims.t.65 <- allSimsTies(6,5,0.5)
+sims.t.76 <- allSimsTies(7,6,0.5)
+cat("Small Unequal Sample Sizes Complete","\n")
+sims.t.1005 <- allSimsTiesies(10,5,0.5)
+sims.t.1008 <- allSimsTies(10,8,0.5)
+sims.t.1507 <- allSimsTies(15,7,0.5)
+sims.t.1510 <- allSimsTies(15,10,0.5)
+sims.t.1512 <- allSimsTies(15,12,0.5)
+cat("Unqual Sample Sizes 10 - 15 Complete","\n")
+sims.t.2010 <- allSimsTies(20,10,0.5)
+sims.t.2015 <- allSimsTies(20,15,0.5)
+cat("One more to go!", "\n")
+sims.t.2018 <- allSimsTies(20,18,0.5)
+
+# Write to CSV files
+all.t.Unequal.noties <- list(sims.t.63,sims.t.64,sims.t.65,sims.t.74,sims.t.75, sims.t.76,sims.t.1005,sims.t.1008,sims.t.1507,sims.t.1510,sims.t.1512,sims.t.2010,sims.t.2015, sims.t.2018) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="labels"),.)
+
+names(all.t.Unequal.noties) <- c("Distribution","N6M3","N6M4","N6M5","N7M4","N7M5","N7M6","N10M5","N10M8","N15M7","N15M10","N15M12","N20M10","N20M15","N20M18")
+write.csv(all.t.Unequal.noties,file="AllUnequalPowerd05.csv")
+
+
+## Simulations Unequal Sample Sizes
+cat("Shift = 1","\n")
+sims.t.63 <- allSimsTies(6,3,1)
+sims.t.74 <- allSimsTies(7,4,1)
+sims.t.64 <- allSimsTies(6,4,1)
+sims.t.75 <- allSimsTies(7,5,1)
+sims.t.65 <- allSimsTies(6,5,1)
+sims.t.76 <- allSimsTies(7,6,1)
+cat("Small Unequal Sample Sizes Complete","\n")
+sims.t.1005 <- allSimsTies(10,5,1)
+sims.t.1008 <- allSimsTies(10,8,1)
+sims.t.1507 <- allSimsTies(15,7,1)
+sims.t.1510 <- allSimsTies(15,10,1)
+sims.t.1512 <- allSimsTies(15,12,1)
+cat("Unqual Sample Sizes 10 - 15 Complete","\n")
+sims.t.2010 <- allSimsTies(20,10,1)
+sims.t.2015 <- allSimsTies(20,15,1)
+cat("One more to go!", "\n")
+sims.t.2018 <- allSimsTies(20,18,1)
+
+# Write to CSV files
+all.t.Unequal.noties <- list(sims.t.63,sims.t.64,sims.t.65,sims.t.74,sims.t.75, sims.t.76,sims.t.1005,sims.t.1008,sims.t.1507,sims.t.1510,sims.t.1512,sims.t.2010,sims.t.2015, sims.t.2018) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="labels"),.)
+
+names(all.t.Unequal.noties) <- c("Distribution","N6M3","N6M4","N6M5","N7M4","N7M5","N7M6","N10M5","N10M8","N15M7","N15M10","N15M12","N20M10","N20M15","N20M18")
+write.csv(all.t.Unequal.noties,file="AllUnequalPowerd1.csv")
+
+
+## Simulations with Ttest for Unequal Sample Sizes
+cat("Shift = 1.5","\n")
+sims.t.63 <- allSimsTies(6,3,1.5)
+sims.t.74 <- allSimsTies(7,4,1.5)
+sims.t.64 <- allSimsTies(6,4,1.5)
+sims.t.75 <- allSimsTies(7,5,1.5)
+sims.t.65 <- allSimsTies(6,5,1.5)
+sims.t.76 <- allSimsTies(7,6,1.5)
+cat("Small Unequal Sample Sizes Complete","\n")
+sims.t.1005 <- allSimsTies(10,5,1.5)
+sims.t.1008 <- allSimsTies(10,8,1.5)
+sims.t.1507 <- allSimsTies(15,7,1.5)
+sims.t.1510 <- allSimsTies(15,10,1.5)
+sims.t.1512 <- allSimsTies(15,12,1.5)
+cat("Unqual Sample Sizes 10 - 15 Complete","\n")
+sims.t.2010 <- allSimsTies(20,10,1.5)
+sims.t.2015 <- allSimsTies(20,15,1.5)
+cat("One more to go!", "\n")
+sims.t.2018 <- allSimsTies(20,18,1.5)
+
+# Write to CSV files
+all.t.Unequal.noties <- list(sims.t.63,sims.t.64,sims.t.65,sims.t.74,sims.t.75, sims.t.76,sims.t.1005,sims.t.1008,sims.t.1507,sims.t.1510,sims.t.1512,sims.t.2010,sims.t.2015, sims.t.2018) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="labels"),.)
+
+names(all.t.Unequal.noties) <- c("Distribution","N6M3","N6M4","N6M5","N7M4","N7M5","N7M6","N10M5","N10M8","N15M7","N15M10","N15M12","N20M10","N20M15","N20M18")
+write.csv(all.t.Unequal.noties,file="AllUnequalPowerd15.csv")
+

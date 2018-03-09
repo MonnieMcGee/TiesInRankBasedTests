@@ -1,0 +1,69 @@
+## Source file to run Simulations with equal sample sizes
+## Created December 12, 2017
+
+require(VGAM)
+require(dplyr)
+require(coin)
+
+## Assume that this file is in the same directory as necessary functions.
+source("SmallSampleTypeIWMW.txt")
+source("SmallSampleTypeITtest.txt")
+
+## Simulations
+cat("Two Sample t-test Simulations","\n")
+sims.t.33 <- allSims(3,3)
+sims.t.44 <- allSims(4,4)
+sims.t.55 <- allSims(5,5)
+sims.t.66 <- allSims(6,6)
+sims.t.77 <- allSims(7,7)
+sims.t.88 <- allSims(8,8)
+sims.t.99 <- allSims(9,9)
+cat("Equal Sample Sizes 3-9 Complete","\n")
+sims.t.1010 <- allSims(10,10)
+sims.t.1111 <- allSims(11,11)
+sims.t.1212 <- allSims(12,12)
+sims.t.1313 <- allSims(13,13)
+sims.t.1414 <- allSims(14,14)
+sims.t.1515 <- allSims(15,15)
+cat("Equal Sample Sizes 10 - 15 Complete","\n")
+sims.t.1717 <- allSims(17,17)
+sims.t.1616 <- allSims(16,16)
+sims.t.1818 <- allSims(18,18)
+sims.t.1919 <- allSims(19,19)
+cat("One more to go!", "\n")
+sims.t.2020 <- allSims(20,20)
+
+cat("Wilcoxon Rank Sum Simulations","\n")
+sims.wmw.33 <- allSims(3,3)
+sims.wmw.44 <- allSims(4,4)
+sims.wmw.55 <- allSims(5,5)
+sims.wmw.66 <- allSims(6,6)
+sims.wmw.77 <- allSims(7,7)
+sims.wmw.88 <- allSims(8,8)
+sims.wmw.99 <- allSims(9,9)
+cat("Equal Sample Sizes 3-9 Complete","\n")
+sims.wmw.1010 <- allSims(10,10)
+sims.wmw.1111 <- allSims(11,11)
+sims.wmw.1212 <- allSims(12,12)
+sims.wmw.1313 <- allSims(13,13)
+sims.wmw.1414 <- allSims(14,14)
+sims.wmw.1515 <- allSims(15,15)
+cat("Equal Sample Sizes 10 - 15 Complete","\n")
+sims.wmw.1717 <- allSims(17,17)
+sims.wmw.1616 <- allSims(16,16)
+sims.wmw.1818 <- allSims(18,18)
+sims.wmw.1919 <- allSims(19,19)
+cat("One more to go!", "\n")
+sims.wmw.2020 <- allSims(20,20)
+
+## Create CSV files
+all.t.Results.noties <- list(sims.t.33,sims.t.44,sims.t.55,sims.t.66,sims.t.77, sims.t.88,sims.t.99,sims.t.1010,sims.t.1111,sims.t.1212,sims.t.1313,sims.t.1414,sims.t.1515, sims.t.1616, sims.t.1717, sims.t.1818, sims.t.1919, sims.t.2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="labels"),.)
+
+names(all.t.Results.noties) <- c("Distribution","N3","N4","N5","N6","N7","N8","N9","N10","N11","N12","N13","N14","N15","N16","N17","N18","N19","N20")
+
+write.csv(all.t.Results.noties,file="AllTResultsNoties.csv")
+
+all.wmw.Results.noties <- list(sims.wmw.33,sims.wmw.44,sims.wmw.55,sims.wmw.66,sims.wmw.77, sims.wmw.88,sims.wmw.99,sims.wmw.1010,sims.wmw.1111,sims.wmw.1212,sims.wmw.1313,sims.wmw.1414,sims.wmw.1515, sims.wmw.1616, sims.wmw.1717, sims.wmw.1818, sims.wmw.1919, sims.wmw.2020) %>% Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2,by="labels"),.)
+
+names(all.wmw.Results.noties) <- c("Distribution","N3","N4","N5","N6","N7","N8","N9","N10","N11","N12","N13","N14","N15","N16","N17","N18","N19","N20")
+write.csv(all.wmw.Results.noties,file="AllWMWResultsNoties.csv")

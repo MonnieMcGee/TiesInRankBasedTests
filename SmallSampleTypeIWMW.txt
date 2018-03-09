@@ -1,0 +1,73 @@
+## Series of functions to determine the Type I and Type II Error properties of 
+## Wilcoxon Rank Sum and Wilcoxon Signed Rank tests in the presence of ties
+## This set of functions is for continuous distributions.
+
+## Sample sizes used: 3 - 20, inclusive
+## Tests examined: Wilcoxon rank sum test
+## Distributions used: Normal, t, Gamma, Exponential, Cauchy, LaPlace
+## Percentage of ties: 10%, 25%, 50%
+## Presence of ties: within one sample, within each sample, across samples
+
+## Underlying normal population
+wmwSimNormal <- function(n1, n2, d, alpha = 0.05, nsims = 1000)
+	{	
+		samp1 <- rnorm(n1)
+		samp2 <- rnorm(n2, mean=d)
+		
+		nobs <- (n1 + n2)*nsims
+		dat <- data.frame(Group=gl(2,n1,length=n1+n2),matrix(rnorm(nobs, mean=d),ncol=nsims))
+				pvals <- sapply(dat[,2:ncol(dat)],function(xx) pvalue(wilcox_test(xx~dat$Group)))
+		typeIerror <- length(pvals[pvals < alpha])/nsims
+return(typeIerror)
+}
+
+## Underlying exponential population
+wmwSimExp <- function(n1, n2, d, alpha = 0.05, nsims = 1000)
+	{	
+		nobs <- (n1 + n2)*nsims
+		dat <- data.frame(Group=gl(2,n1,length=n1+n2),matrix(rexp(nobs,rate=d),ncol=nsims))
+				pvals <- sapply(dat[,2:ncol(dat)],function(xx) pvalue(wilcox_test(xx~dat$Group)))
+		typeIerror <- length(pvals[pvals < alpha])/nsims
+return(typeIerror)
+}
+
+## Underlying Cauchy population
+wmwSimCauchy <- function(n1, n2, d, alpha = 0.05, nsims = 1000)
+	{	
+		nobs <- (n1 + n2)*nsims
+		dat <- data.frame(Group=gl(2,n1,length=n1+n2),matrix(rcauchy(nobs,location=d),ncol=nsims))
+				pvals <- sapply(dat[,2:ncol(dat)],function(xx) pvalue(wilcox_test(xx~dat$Group)))
+		typeIerror <- length(pvals[pvals < alpha])/nsims
+return(typeIerror)
+}
+
+## Underlying double exponential population=
+wmwSimLP <- function(n1, n2, d, alpha = 0.05, nsims = 1000)
+	{	
+		nobs <- (n1 + n2)*nsims
+		dat <- data.frame(Group=gl(2,n1,length=n1+n2),matrix(rlaplace(nobs, location=d),ncol=nsims))
+				pvals <- sapply(dat[,2:ncol(dat)],function(xx) pvalue(wilcox_test(xx~dat$Group)))
+		typeIerror <- length(pvals[pvals < alpha])/nsims
+return(typeIerror)
+}
+
+allSimsW <- function(n1, n2, d, alpha=0.05, nreps = 100, nsims = 1000){
+	normvec <- numeric(nreps)
+	expvec <- numeric(nreps)
+	cauchyvec <- numeric(nreps)
+	lpvec <- numeric(nreps)
+	for(i in 1:nreps) {
+		normvec[i] <- wmwSimNormal(n1, n2, d, alpha, nsims)
+		expvec[i] <- wmwSimExp(n1, n2, d, alpha, nsims)
+		cauchyvec[i] <- wmwSimCauchy(n1, n2, d, alpha, nsims)
+		lpvec[i] <- wmwSimLP(n1, n2, d, alpha, nsims)
+	}
+	labels <- c("Normal", "Exponential", "Cauchy", "LaPlace")
+	error <- c(mean(normvec),mean(expvec),mean(cauchyvec),mean(lpvec))
+	results.df <- data.frame(labels=labels,error=error)
+	return(results.df)
+}
+
+## Need to do tied observations
+## Need to do unequal sample sizes, too.
+
