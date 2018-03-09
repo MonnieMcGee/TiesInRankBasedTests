@@ -1,5 +1,5 @@
 ## Code to create graphics
-## Working directory: setwd("./Dropbox/2018 Spring Work/Ties in Rank Tests/Results")
+## File assumes that R working directory is set to location of .csv files.
 
 library(ggplot2)
 library(ggthemes)
