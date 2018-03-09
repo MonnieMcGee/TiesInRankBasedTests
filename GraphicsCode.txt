@@ -1,0 +1,295 @@
+## Code to create graphics
+## Working directory: setwd("./Dropbox/2018 Spring Work/Ties in Rank Tests/Results")
+
+library(ggplot2)
+library(ggthemes)
+library(gdata)
+library(reshape2)
+library(plyr)
+library(dplyr)
+library(tidyr)
+
+################### Graphics to display #####################
+## Figure 1: Type I error for ttest and wmw with unequal sample sizes - Fig1.tiff
+## Figure 2: Power for ttest and wmw with unequal sample sizes - Fig2.tff
+## Figure 3: Type I error for mid-rank replacement, average scores replacement,
+		and jittering replacement with 10 percent missing.
+## Figure 4: Power for mid-rank replacement, average scores replacement,
+		and jittering replacement with 10 percent missing.
+## Figure 5: Type I error for mid-rank replacement, average scores replacement
+##		and jittering replacement with 25 percent missing
+## Figure 6: Power for mid-rank replacement, average scores replacement
+## 		and jittering replacement with 25 percent missing.
+### Figure 7: Type I error for jittering method
+### Table 1: Maximum power for jittering method (LaTex Code in .tex document)
+###################################################################
+
+
+############# Figure 1: Type I Error for Unequal sample size ################
+unequalWMW <- read.csv("AllWMWUnequalNoties.csv")
+unequalWMW <- unequalWMW[,-1]
+wmw2 <- melt(unequalWMW,id="Distribution")
+varNames <- c("Distribution","SampleSize","Error")
+names(wmw2) <- varNames
+wmw3 <- wmw2 %>% separate(SampleSize,into=c("N","M"),sep=-3)
+wmw3$N <- gsub("M","",wmw3$N)
+wmw3$M <- as.numeric(gsub("M","",wmw3$M))
+wmw3$N <- as.numeric(gsub("N","",wmw3$N))
+wmw3$ratio <- round(wmw3$N/wmw3$M,1)
+
+unequalT <- read.csv("AllTtestUnequalNoties.csv")
+unequalT <- unequalT[,-1]
+ttest2 <- melt(unequalT,id="Distribution")
+varNames <- c("Distribution","SampleSize","Error")
+names(ttest2) <- varNames
+ttest3 <- ttest2 %>% separate(SampleSize,into=c("N","M"),sep=-3)
+ttest3$N <- gsub("M","",ttest3$N)
+ttest3$M <- as.numeric(gsub("M","",ttest3$M))
+ttest3$N <- as.numeric(gsub("N","",ttest3$N))
+ttest3$ratio <- round(ttest3$N/ttest3$M,1)
+
+## Combine Ttest and WMW data and get facet plot
+tiff(filename="Fig1.tiff",width=5,height=5,units="in",res=300)
+test_names <- c(`Ttest`="Two-Sample T test", `WMW` = "Wilcoxon Rank Sum")
+unequalN <- bind_rows("Ttest"=ttest3,"WMW"=wmw3,.id="Test")
+gg4 <- ggplot(unequalN,aes(ratio,Error)) + geom_line(aes(linetype=Distribution))+theme_bw() + xlab("Ratio of Sample Sizes") + ylab("Type I Error") + theme(legend.position="bottom") 
+gg4 + facet_grid(.~Test,labeller=labeller(Test=as_labeller(test_names)))
+dev.off()
+
+## Bar chart - just to see what it would look like
+ggplot(unequalN,aes(fill=as.factor(N),y=Error,x=ratio)) + geom_col(position="dodge",stat="identity") + facet_grid(Distribution~Test) + theme_bw()
+
+############# Figure 2: Power for Unequal sample size ################
+unpowd05 <- read.csv(file="AllUnequalPowerd05.csv")
+unpowd1 <- read.csv(file="AllUnequalPowerd1.csv")
+unpowd15 <- read.csv(file="AllUnequalPowerd15.csv")
+unpowd05 <- unpowd05[,-1]
+unpowd1 <- unpowd1[,-1]
+unpowd15 <- unpowd15[,-1]
+names(unpowd05) <- c("Distribution","WMW0603","TST0603","WMW0604","TST0604","WMW0605","TST0605","WMW0704","TST0704","WMW0705","TST0705","WMW0706","TST0706","WMW1005","TST1005","WMW1008","TST1008","WMW1507","TST1507","WMW1510","TST1510","WMW1512","TST1512","WMW2010","TST2010","WMW2015","TST2015","WMW2018","TST2018")
+names(unpowd1) <- c("Distribution","WMW0603","TST0603","WMW0604","TST0604","WMW0605","TST0605","WMW0704","TST0704","WMW0705","TST0705","WMW0706","TST0706","WMW1005","TST1005","WMW1008","TST1008","WMW1507","TST1507","WMW1510","TST1510","WMW1512","TST1512","WMW2010","TST2010","WMW2015","TST2015","WMW2018","TST2018")
+names(unpowd15) <- c("Distribution","WMW0603","TST0603","WMW0604","TST0604","WMW0605","TST0605","WMW0704","TST0704","WMW0705","TST0705","WMW0706","TST0706","WMW1005","TST1005","WMW1008","TST1008","WMW1507","TST1507","WMW1510","TST1510","WMW1512","TST1512","WMW2010","TST2010","WMW2015","TST2015","WMW2018","TST2018")
+
+longUnpowD05 <- unpowd05 %>% gather(Test,Error,WMW0603:TST2018)
+sepd05 <- longUnpowD05 %>% separate(Test,sep=3,c("Test_Type","Sample_Size"))
+sepd05final <- sepd05 %>% separate(Sample_Size,sep=-3,c("N","M"))
+
+longUnpowD1 <- unpowd1 %>% gather(Test,Error,WMW0603:TST2018)
+sepd1 <- longUnpowD1 %>% separate(Test,sep=3,c("Test_Type","Sample_Size"))
+sepd1final <- sepd1 %>% separate(Sample_Size,sep=-3,c("N","M"))
+
+longUnpowD15 <- unpowd15 %>% gather(Test,Error,WMW0603:TST2018)
+sepd15 <- longUnpowD15 %>% separate(Test,sep=3,c("Test_Type","Sample_Size"))
+sepd15final <- sepd15 %>% separate(Sample_Size,sep=-3,c("N","M"))
+
+sepd05final$M <- as.numeric(sepd05final$M)
+sepd05final$N <- as.numeric(sepd05final$N)
+sepd05final$ratio <- round(sepd05final$N/sepd05final$M,1)
+sepd1final$M <- as.numeric(sepd1final$M)
+sepd1final$N <- as.numeric(sepd1final$N)
+sepd1final$ratio <- round(sepd1final$N/sepd1final$M,1)
+sepd15final$M <- as.numeric(sepd15final$M)
+sepd15final$N <- as.numeric(sepd15final$N)
+sepd15final$ratio <- round(sepd15final$N/sepd15final$M,1)
+
+## Combine power data and get facet plot
+tiff(filename="Fig2.tiff",width=5,height=5,units="in",res=300)
+test_names <- c("TST"="Two-Sample T test", "WMW" = "Wilcoxon Rank Sum")
+unequalPow <- bind_rows("D=0.5"=sepd05final,"D=1"=sepd1final,"D=1.5"=sepd15final,.id="Shift")
+gg5 <- ggplot(unequalPow,aes(ratio,Error)) + geom_line(aes(linetype=Distribution))+theme_bw() + xlab("Ratio of Sample Sizes") + ylab("Power") + theme(legend.position="bottom") 
+gg5 + facet_grid(Shift~Test_Type,labeller=labeller(Test_Type=as_labeller(test_names)))
+dev.off()
+
+############ Figure 3: Type 1 Error for 10% ties in data #####
+mrSize10 <- read.csv(file="TiesMR10Percent.csv")
+asSize10 <- read.csv(file="TiesAS10Percent.csv")
+jittSize10 <- read.csv(file="TiesJitt10Percent.csv")
+omit10 <- read.csv(file="TiesOmit10Percent.csv")
+mrSize10 <- mrSize10[,-1]
+asSize10 <- asSize10[,-1]
+jittSize10 <- jittSize10[,-1]
+omit10 <- omit10[,-1]
+names(omit10) <- gsub("T","TST",names(omit10))
+
+longMR10 <- mrSize10 %>% gather(Test,Error,WMW3:TST20)
+sepMR10 <- longMR10 %>% separate(Test,c("Test_Type","Sample_Size"),sep=3)
+sepMR10$Sample_Size  <- as.numeric(sepMR10$Sample_Size)
+sepMR10$Test_Type <- as.factor(sepMR10$Test_Type)
+
+longAS10 <- asSize10 %>% gather(Test,Error,WMW3:TST20)
+sepAS10 <- longAS10 %>% separate(Test,c("Test_Type","Sample_Size"),sep=3)
+sepAS10$Sample_Size  <- as.numeric(sepAS10$Sample_Size)
+sepAS10$Test_Type <- as.factor(sepAS10$Test_Type)
+
+longJitt10 <- jittSize10 %>% gather(Test,Error,WMW3:TST20)
+sepJitt10 <- longJitt10 %>% separate(Test,c("Test_Type","Sample_Size"),sep=3)
+sepJitt10$Sample_Size  <- as.numeric(sepJitt10$Sample_Size)
+sepJitt10$Test_Type <- as.factor(sepJitt10$Test_Type)
+
+longOm10 <- omit10 %>% gather(Test,Error,WMW.N5:TST.N20)
+sepOm10 <- longOm10 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepOm10$Sample_Size <- gsub("N116","N16", sepOm10$Sample_Size)
+sepOm10$Sample_Size  <- as.numeric(gsub("N","",sepOm10$Sample_Size))
+sepOm10$Sample_Size  <- as.numeric(sepOm10$Sample_Size)
+sepOm10$Test_Type <- as.factor(sepOm10$Test_Type)
+
+
+# Merge data
+ReplaceSize10 <- bind_rows("Mid-Ranks"=sepMR10,"Average-Scores"=sepAS10,"Jittering"=sepJitt10,"Omission"=sepOm10,.id="Method")
+
+## Create tiff 
+tiff(filename="Fig3.tiff",width=5,height=5,units="in",res=300)
+test_names <- c(`TST`="Two-Sample T test", `WMW` = "Wilcoxon Rank Sum")
+gg <- ggplot(ReplaceSize10,aes(Sample_Size,Error)) + geom_line(aes(linetype=Distribution)) + theme_bw()
+gg + facet_grid(Method~Test_Type, labeller=labeller(Test_Type=test_names)) + theme(legend.position="bottom") + xlab("Sample Size") + ylab("Type I Error") +theme(axis.title.x = element_text(size=10),axis.title.y  = element_text(size=10))
+dev.off()
+
+### Figure 4 - Power for 10% missing with all three replacement strategies
+jitt10 <- read.csv(file="TiesJitt10PercentPowerd1.csv")
+mras10 <- read.csv(file="Ties10PercentPowerd1.csv")
+omitPow10 <- read.csv(file="TiesOmit10PercentPowerd1.csv")
+jitt10 <- jitt10[,-1] # delete first column of row numbers
+mras10 <- mras10[,-1]
+omitPow10 <- omitPow10[,-1]
+
+longJ10 <- jitt10 %>% gather(Test,Error,WMW.N5:T.N20)
+sepJ10 <- longJ10 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepJ10$Sample_Size  <- as.numeric(gsub("N","",sepJ10$Sample_Size))
+sepJ10$Test_Type <- as.factor(sepJ10$Test_Type)
+sepJ10$Method <- as.factor(rep("Jitt",40))
+
+longMRAS10 <- mras10 %>% gather(Test,Error,MR.WMW.N5:AS.T.N20)
+sepMRAS10 <- longMRAS10 %>% separate(Test,c("Method","Test_Type","Sample_Size"))
+sepMRAS10$Sample_Size  <- as.numeric(gsub("N","",sepMRAS10$Sample_Size))
+sepMRAS10$Test_Type <- as.factor(sepMRAS10$Test_Type)
+sepMRAS10$Method <- as.factor(sepMRAS10$Method)
+sepMRAS10 <- sepMRAS10 %>% select(Distribution,Test_Type,Sample_Size,Error,Method)
+
+longOm10 <- omitPow10 %>% gather(Test,Error,WMW.N8:T.N20)
+sepOm10 <- longOm10 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepOm10$Sample_Size  <- as.numeric(gsub("N","",sepOm10$Sample_Size))
+sepOm10$Test_Type <- as.factor(sepOm10$Test_Type)
+sepOm10$Method <- as.factor(rep("Omit",40))
+
+missPow10 <- rbind(sepJ10,sepMRAS10,sepOm10)
+
+tiff(filename="Fig4.tiff",width=5,height=5,units="in",res=300)
+test_names <- c(`T`="Two-Sample T test", `WMW` = "Wilcoxon Rank Sum")
+methodNames <- c(`Jitt` = "Jittering",`AS`="Average Scores",`MR`="Mid-Ranks",`Omit`="Omission")
+gg <- ggplot(missPow10,aes(Sample_Size,Error)) + geom_line(aes(linetype=Distribution)) + theme_bw()
+gg + facet_grid(Method~Test_Type, labeller=labeller(Test_Type=test_names,Method=methodNames)) + theme(legend.position="bottom") + xlab("Sample Size") + ylab("Power for One Standard Deviation Shift in Mean") +theme(axis.title.x = element_text(size=10),axis.title.y  = element_text(size=10))
+dev.off()
+
+############### Fig 5: Type I error for omitting ties.
+omit10 <- read.csv(file="TiesOmit10Percent.csv")
+omit15 <- read.csv(file="TiesOmit15Percent.csv")
+omit25 <- read.csv(file="TiesOmit25Percent.csv")
+omit50 <- read.csv(file="TiesOmit50Percent.csv")
+omit10 <- omit10[,-1]
+omit15 <- omit15[,-1]
+omit25 <- omit25[,-1]
+omit50 <- omit50[,-1]
+
+longOmit10 <- omit10 %>% gather(Test,Error,WMW.N5:T.N20)
+sepOmit10 <- longOmit10 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepOmit10$Sample_Size <- gsub("N116","N16", sepOmit10$Sample_Size)
+sepOmit10$Sample_Size  <- as.numeric(gsub("N","",sepOmit10$Sample_Size))
+sepOmit10$Test_Type <- as.factor(sepOmit10$Test_Type)
+
+longOmit15 <- omit15 %>% gather(Test,Error,WMW.N5:T.N20)
+sepOmit15 <- longOmit15 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepOmit15$Sample_Size <- gsub("N116","N16", sepOmit15$Sample_Size)
+sepOmit15$Sample_Size  <- as.numeric(gsub("N","",sepOmit15$Sample_Size))
+sepOmit15$Test_Type <- as.factor(sepOmit15$Test_Type)
+
+longOmit25 <- omit25 %>% gather(Test,Error,WMW.N7:T.N20)
+sepOmit25 <- longOmit25 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepOmit25$Sample_Size <- gsub("N116","N16", sepOmit25$Sample_Size)
+sepOmit25$Sample_Size  <- as.numeric(gsub("N","",sepOmit25$Sample_Size))
+sepOmit25$Test_Type <- as.factor(sepOmit25$Test_Type)
+
+longOmit50 <- omit50 %>% gather(Test,Error,WMW.N8:T.N20)
+sepOmit50 <- longOmit50 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepOmit50$Sample_Size <- gsub("N116","N16", sepOmit50$Sample_Size)
+sepOmit50$Sample_Size  <- as.numeric(gsub("N","",sepOmit50$Sample_Size))
+sepOmit50$Test_Type <- as.factor(sepOmit50$Test_Type)
+
+allOmit <- bind_rows("10 Percent"=sepOmit10,"15 Percent"=sepOmit15,"25 Percent"=sepOmit25,"50 Percent"=sepOmit50,.id="Percentage")
+
+tiff(filename="Fig5.tiff",width=5,height=5,units="in",res=300)
+test_names <- c('T'="Two-Sample T test", 'WMW' = "Wilcoxon Rank Sum")
+percentages <- c("10 Percent"="10% Tied","15 Percent" = "15% Tied", "25 Percent"="25% Tied","50 Percent"="50% Tied")
+gg <- ggplot(allOmit,aes(Sample_Size,Error)) + geom_line(aes(linetype=Distribution)) + theme_bw()
+gg + facet_grid(Percentage~Test_Type, labeller=labeller(Test_Type=test_names)) + theme(legend.position="bottom") + xlab("Sample Size") + ylab("Type I Error") +theme(axis.title.x = element_text(size=10),axis.title.y  = element_text(size=10))
+dev.off()
+
+################ Fig 6: power for omitting  ties when d = 1
+omitPow10 <- read.csv(file="TiesOmit10PercentPowerd1.csv")
+omitPow15 <- read.csv(file="TiesOmit15PercentPowerd1.csv")
+omitPow25 <- read.csv(file="TiesOmit25PercentPowerd1.csv")
+omitPow50 <- read.csv(file="TiesOmit50PercentPowerd1.csv")
+omitPow10 <- omitPow10[,-1]
+omitPow15 <- omitPow15[,-1]
+omitPow25 <- omitPow25[,-1]
+omitPow50 <- omitPow50[,-1]
+
+longOmit10d1 <- omitPow10 %>% gather(Test,Error,WMW.N8:T.N20)
+sepOmit10d1 <- longOmit10d1 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepOmit10d1$Sample_Size  <- as.numeric(gsub("N","",sepOmit10d1$Sample_Size))
+sepOmit10d1$Test_Type <- as.factor(sepOmit10d1$Test_Type)
+
+longOmit15d1 <- omitPow15 %>% gather(Test,Error,WMW.N8:T.N20)
+sepOmit15d1 <- longOmit15d1 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepOmit15d1$Sample_Size  <- as.numeric(gsub("N","",sepOmit15d1$Sample_Size))
+sepOmit15d1$Test_Type <- as.factor(sepOmit15d1$Test_Type)
+
+longOmit25d1 <- omitPow25 %>% gather(Test,Error,WMW.N8:T.N20)
+sepOmit25d1 <- longOmit25d1 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepOmit25d1$Sample_Size  <- as.numeric(gsub("N","",sepOmit25d1$Sample_Size))
+sepOmit25d1$Test_Type <- as.factor(sepOmit25d1$Test_Type)
+
+longOmit50d1 <- omitPow50 %>% gather(Test,Error,WMW.N8:T.N20)
+sepOmit50d1 <- longOmit50d1 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepOmit50d1$Sample_Size  <- as.numeric(gsub("N","",sepOmit50d1$Sample_Size))
+sepOmit50d1$Test_Type <- as.factor(sepOmit50d1$Test_Type)
+
+allOmitPow <- bind_rows("10 Percent"=sepOmit10d1,"15 Percent"=sepOmit15d1,"25 Percent"=sepOmit25d1,"50 Percent"=sepOmit50d1,.id="Percentage")
+
+tiff(filename="Fig6.tiff",width=5,height=5,units="in",res=300)
+test_names <- c(`T`="Two-Sample T test", `WMW` = "Wilcoxon Rank Sum")
+percentages <- c("10 Percent"="10% Tied","15 Percent" = "15% Tied", "25 Percent"="25% Tied","50 Percent"="50% Tied")
+gg <- ggplot(allOmitPow,aes(Sample_Size,Error)) + geom_line(aes(linetype=Distribution)) + theme_bw()
+gg + facet_grid(Percentage~Test_Type, labeller=labeller(Test_Type=test_names,Percentage=percentages)) + theme(legend.position="bottom") + xlab("Sample Size") + ylab("Power") + xlim(7,21) +theme(axis.title.x = element_text(size=10),axis.title.y  = element_text(size=10))
+dev.off()
+
+## Import Jitter Power Data for d = 1
+## Done separately because it doesn't have as many sample sizes as MR and AS Data
+jitPow10 <- read.csv(file="TiesJitt10PercentPowerd1.csv")
+jitPow15 <- read.csv(file="TiesJitt15PercentPowerd1.csv")
+# Didn't finish code for jitPow10 and jitPow15. Decided to do a table instead.
+jitPow25 <- read.csv(file="TiesJitt25PercentPowerd1.csv")
+jitPow25 <- jitPow25[,-1]
+jitPow50 <- read.csv(file="TiesJitt50PercentPowerd1.csv")
+jitPow50 <- jitPow50[,-1]
+longJ25 <- jitPow25 %>% gather(Test,Power,WMW.N5:T.N20)
+sepJ25 <- longJ25 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepJ25$Sample_Size <- gsub("N116","N16", sepJ25$Sample_Size)
+sepJ25$Sample_Size  <- as.numeric(gsub("N","",sepJ25$Sample_Size))
+sepJ25$Test_Type <- as.factor(sepJ25$Test_Type)
+
+longJ50 <- jitPow50 %>% gather(Test,Power,WMW.N5:T.N20)
+sepJ50 <- longJ50 %>% separate(Test,c("Test_Type","Sample_Size"))
+sepJ50$Sample_Size <- gsub("N116","N16", sepJ50$Sample_Size)
+sepJ50$Sample_Size  <- as.numeric(gsub("N","",sepJ50$Sample_Size))
+sepJ50$Test_Type <- as.factor(sepJ50$Test_Type)
+
+jitterPow <- bind_rows("25_Percent"=sepJ25,"50_Percent"=sepJ25,.id="Percentage")
+
+tiff(filename="Fig6.tiff",width=5,height=5,units="in",res=300)
+test_names <- c(`T`="Two-Sample T test", `WMW` = "Wilcoxon Rank Sum")
+percentages <- c(`25_Percent`="25% Tied",`50_Percent`="50% Tied")
+gg <- ggplot(jitterPow,aes(Sample_Size,Power)) + geom_line(aes(linetype=Distribution)) + theme_bw()
+gg + facet_grid(Percentage~Test_Type, labeller=labeller(Test_Type=test_names),Percentage=percentages) + theme(legend.position="bottom") + xlab("Sample Size") + ylab("Power") +theme(axis.title.x = element_text(size=10),axis.title.y  = element_text(size=10))
+dev.off()
+
+
